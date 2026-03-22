@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Master</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ══════════════════════════════════════════
+   SKIN VARIABLES
+══════════════════════════════════════════ */
+:root {
+  --bg: #080A0E; --bg2: #0F1218;
+  --surface: #0F1218; --surface2: #141820;
+  --border: #1E2430; --border2: #252d3d;
+  --accent: #00E5FF; --accent2: #FF3CAC;
+  --text: #E8EAF0; --text2: #9aa5b8;
+  --muted: #4A5568;
+  --success: #00FF88; --warn: #FFD600;
+  --btn-text: #000;
+  --btn-bg: linear-gradient(135deg, #00E5FF, #0099bb);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'IBM Plex Mono', monospace;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --radius: 12px; --radius-sm: 8px; --radius-pill: 100px;
+  --grid-color: rgba(0,229,255,0.03);
+  --orb-opacity: 0.12;
+  --shadow: 0 8px 24px rgba(0,229,255,0.15);
+  --title-gradient: linear-gradient(90deg,#00E5FF 0%,#fff 50%,#FF3CAC 100%);
+  --t: all 0.28s cubic-bezier(0.4,0,0.2,1);
+  --scan: none;
+}
+[data-skin="light"] {
+  --bg: #F7F8FA; --bg2: #FFFFFF;
+  --surface: #FFFFFF; --surface2: #F0F2F5;
+  --border: #E2E5EA; --border2: #CBD0D8;
+  --accent: #1A73E8; --accent2: #E53935;
+  --text: #1C1E24; --text2: #5F6878;
+  --muted: #9AA3AF;
+  --success: #1E8E4F; --warn: #F29900;
+  --btn-text: #fff;
+  --btn-bg: linear-gradient(135deg, #1A73E8, #1557B0);
+  --font-display: 'DM Sans', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --radius: 10px; --radius-sm: 6px;
+  --grid-color: rgba(26,115,232,0.04);
+  --orb-opacity: 0.05;
+  --shadow: 0 4px 16px rgba(26,115,232,0.18);
+  --title-gradient: linear-gradient(90deg,#1A73E8,#1C1E24);
+}
+[data-skin="pastel"] {
+  --bg: #FDF6FF; --bg2: #FFFFFF;
+  --surface: #FFFFFF; --surface2: #F5EEFF;
+  --border: #E8D8F8; --border2: #D4B8F0;
+  --accent: #9B5CF6; --accent2: #F472B6;
+  --text: #2D1B4E; --text2: #7C5FA8;
+  --muted: #B09DC8;
+  --success: #34C77B; --warn: #FBBC04;
+  --btn-text: #fff;
+  --btn-bg: linear-gradient(135deg, #9B5CF6, #F472B6);
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --radius: 16px; --radius-sm: 10px;
+  --grid-color: rgba(155,92,246,0.04);
+  --orb-opacity: 0.1;
+  --shadow: 0 8px 24px rgba(155,92,246,0.2);
+  --title-gradient: linear-gradient(90deg,#9B5CF6,#F472B6);
+}
+[data-skin="brutal"] {
+  --bg: #FFFDE7; --bg2: #FFF9C4;
+  --surface: #FFFFFF; --surface2: #FFF9C4;
+  --border: #000000; --border2: #000000;
+  --accent: #FF3D00; --accent2: #1A237E;
+  --text: #000000; --text2: #333333;
+  --muted: #555555;
+  --success: #1B5E20; --warn: #E65100;
+  --btn-text: #000;
+  --btn-bg: #FFD600;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Space Mono', monospace;
+  --font-mono: 'Space Mono', monospace;
+  --radius: 0px; --radius-sm: 0px; --radius-pill: 0px;
+  --grid-color: rgba(0,0,0,0);
+  --orb-opacity: 0;
+  --shadow: 4px 4px 0px #000;
+  --title-gradient: none;
+  --t: all 0.1s ease;
+}
+[data-skin="terminal"] {
+  --bg: #0A0F0A; --bg2: #0D130D;
+  --surface: #0D130D; --surface2: #111811;
+  --border: #1A3A1A; --border2: #1F461F;
+  --accent: #39FF14; --accent2: #AAFF00;
+  --text: #C8FFC8; --text2: #7AC87A;
+  --muted: #3A6B3A;
+  --success: #39FF14; --warn: #FFFF00;
+  --btn-text: #000;
+  --btn-bg: #39FF14;
+  --font-display: 'Space Mono', monospace;
+  --font-body: 'Space Mono', monospace;
+  --font-mono: 'Space Mono', monospace;
+  --radius: 4px; --radius-sm: 2px; --radius-pill: 4px;
+  --grid-color: rgba(57,255,20,0.04);
+  --orb-opacity: 0.08;
+  --shadow: 0 0 20px rgba(57,255,20,0.2);
+  --title-gradient: none;
+}
+
+/* ══════════════════════════════════════════
+   BASE
+══════════════════════════════════════════ */
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.35s, color 0.35s;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+[data-skin="terminal"] body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.1) 2px,rgba(0,0,0,0.1) 4px);
+  pointer-events: none; z-index: 999;
+}
+.glow-orb {
+  position: fixed; width: 600px; height: 600px;
+  border-radius: 50%; filter: blur(120px);
+  pointer-events: none; z-index: 0;
+  opacity: var(--orb-opacity);
+  transition: opacity 0.4s;
+}
+.glow-orb.one { top:-200px; left:-200px; background: var(--accent); }
+.glow-orb.two { bottom:-200px; right:-200px; background: var(--accent2); }
+
+/* ══════════════════════════════════════════
+   SKIN BAR
+══════════════════════════════════════════ */
+.skin-bar {
+  position: fixed; top: 16px; right: 16px; z-index: 100;
+  display: flex; gap: 5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px;
+  transition: var(--t);
+}
+[data-skin="brutal"] .skin-bar { border: 2px solid #000; box-shadow: 3px 3px 0 #000; }
+[data-skin="terminal"] .skin-bar { box-shadow: 0 0 12px rgba(57,255,20,0.2); }
+
+.skin-btn {
+  width: 28px; height: 28px;
+  border-radius: calc(var(--radius-sm) - 1px);
+  border: 2px solid transparent;
+  cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--t); position: relative;
+}
+.skin-btn:hover { transform: scale(1.15); }
+.skin-btn.active { border-color: var(--text); }
+[data-skin="brutal"] .skin-btn { border-radius: 0; }
+[data-skin="brutal"] .skin-btn.active { border-color: #000; outline: 2px solid #000; outline-offset: 1px; }
+
+.skin-btn[data-s="cyber"]    { background: #080A0E; }
+.skin-btn[data-s="light"]    { background: #F7F8FA; border-color: #ccc; }
+.skin-btn[data-s="pastel"]   { background: linear-gradient(135deg,#c084fc,#f9a8d4); }
+.skin-btn[data-s="brutal"]   { background: #FFD600; }
+.skin-btn[data-s="terminal"] { background: #0A0F0A; }
+
+.skin-tip {
+  position: absolute;
+  bottom: calc(100% + 7px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--text); color: var(--bg);
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 3px 7px; border-radius: 3px;
+  white-space: nowrap; opacity: 0; pointer-events: none;
+  transition: opacity 0.15s;
+}
+.skin-btn:hover .skin-tip { opacity: 1; }
+
+/* ══════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════ */
+.container {
+  position: relative; z-index: 1;
+  max-width: 820px; margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+header { margin-bottom: 48px; animation: fadeUp 0.6s ease both; }
+
+.logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.logo-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0; transition: var(--t);
+}
+[data-skin="brutal"] .logo-icon { border: 2px solid #000; box-shadow: 3px 3px 0 #000; }
+
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(26px,5vw,40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--title-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+[data-skin="brutal"] h1 { -webkit-text-fill-color: var(--accent); background: none; }
+[data-skin="terminal"] h1 { -webkit-text-fill-color: var(--accent); background: none; text-shadow: 0 0 20px var(--accent); }
+
+.subtitle {
+  font-size: 12px; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+[data-skin="terminal"] .subtitle { color: var(--accent2); }
+[data-skin="brutal"] .subtitle { font-weight: 700; }
+
+/* ══════════════════════════════════════════
+   SECTION LABEL
+══════════════════════════════════════════ */
+.section-label {
+  font-size: 11px; color: var(--accent);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 10px; font-family: var(--font-mono);
+}
+[data-skin="brutal"] .section-label {
+  font-size: 12px; font-weight: 700;
+  color: #000; background: var(--accent);
+  display: inline-block; padding: 2px 8px;
+  letter-spacing: 0.05em;
+}
+
+/* ══════════════════════════════════════════
+   TOOLS GRID
+══════════════════════════════════════════ */
+.tools-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.tool-chip {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 12px; font-family: var(--font-mono);
+  background: var(--surface); color: var(--muted);
+  cursor: pointer; transition: var(--t); white-space: nowrap;
+}
+.tool-chip:hover { border-color: var(--accent); color: var(--accent); }
+.tool-chip.active {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: var(--accent); color: var(--accent);
+}
+[data-skin="brutal"] .tool-chip { border: 2px solid #000; font-weight: 700; }
+[data-skin="brutal"] .tool-chip:hover,
+[data-skin="brutal"] .tool-chip.active {
+  background: var(--accent); color: #000;
+  transform: translate(-2px,-2px); box-shadow: 2px 2px 0 #000;
+}
+[data-skin="terminal"] .tool-chip.active { box-shadow: 0 0 8px var(--accent); }
+
+/* ══════════════════════════════════════════
+   INPUT
+══════════════════════════════════════════ */
+.input-section { animation: fadeUp 0.6s 0.2s ease both; margin-bottom: 20px; }
+.input-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden; transition: var(--t);
+  background: var(--surface);
+}
+.input-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent),
+              0 0 20px color-mix(in srgb,var(--accent) 8%,transparent);
+}
+[data-skin="brutal"] .input-wrap { border: 2px solid #000; box-shadow: 4px 4px 0 #000; }
+[data-skin="brutal"] .input-wrap:focus-within { border-color: var(--accent2); box-shadow: 4px 4px 0 #000; }
+[data-skin="terminal"] .input-wrap:focus-within { box-shadow: 0 0 16px rgba(57,255,20,0.2); }
+
+textarea {
+  width: 100%; min-height: 140px;
+  padding: 20px; background: transparent;
+  color: var(--text); font-family: var(--font-body);
+  font-size: 14px; line-height: 1.7;
+  border: none; outline: none; resize: vertical;
+}
+textarea::placeholder { color: var(--muted); }
+.input-footer {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+}
+[data-skin="brutal"] .input-footer { border-top: 2px solid #000; }
+.char-count { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+
+/* ══════════════════════════════════════════
+   EXAMPLES
+══════════════════════════════════════════ */
+.examples-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 10px;
+  animation: fadeUp 0.6s 0.25s ease both;
+}
+.example-pill {
+  padding: 5px 12px;
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius-sm);
+  font-size: 11px; color: var(--muted);
+  cursor: pointer; transition: var(--t);
+  font-family: var(--font-mono);
+}
+.example-pill:hover { border-color: var(--accent2); color: var(--accent2); }
+[data-skin="brutal"] .example-pill { border: 2px dashed #000; font-weight: 700; }
+[data-skin="brutal"] .example-pill:hover { background: var(--accent2); color: #fff; border-style: solid; }
+
+/* ══════════════════════════════════════════
+   BUTTON
+══════════════════════════════════════════ */
+.btn-generate {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 28px;
+  background: var(--btn-bg);
+  border: none; border-radius: var(--radius-sm);
+  color: var(--btn-text);
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 14px; letter-spacing: 0.04em;
+  cursor: pointer; transition: var(--t);
+  width: 100%; justify-content: center;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.btn-generate:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow); }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+[data-skin="brutal"] .btn-generate {
+  border: 2px solid #000; box-shadow: 4px 4px 0 #000;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+[data-skin="brutal"] .btn-generate:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #000; }
+[data-skin="brutal"] .btn-generate:active:not(:disabled) { transform: translate(2px,2px); box-shadow: 2px 2px 0 #000; }
+[data-skin="terminal"] .btn-generate { font-family: 'Space Mono',monospace; text-transform: uppercase; letter-spacing: 0.15em; }
+[data-skin="terminal"] .btn-generate:hover:not(:disabled) { box-shadow: 0 0 24px rgba(57,255,20,0.35); }
+
+/* ══════════════════════════════════════════
+   OUTPUT
+══════════════════════════════════════════ */
+.output-section { margin-top: 32px; animation: fadeUp 0.4s ease both; }
+.output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.target-badge { display: flex; align-items: center; gap: 8px; }
+.badge {
+  padding: 3px 10px; border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.05em; font-family: var(--font-mono);
+}
+.badge-tool {
+  background: color-mix(in srgb,var(--accent) 12%,transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb,var(--accent) 25%,transparent);
+}
+.badge-ready {
+  background: color-mix(in srgb,var(--success) 10%,transparent);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb,var(--success) 20%,transparent);
+}
+[data-skin="brutal"] .badge { border-radius: 0; border: 2px solid #000; font-weight: 700; }
+
+.output-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  transition: var(--t);
+}
+[data-skin="brutal"] .output-box { border: 2px solid #000; box-shadow: 5px 5px 0 #000; }
+[data-skin="terminal"] .output-box { box-shadow: 0 0 20px rgba(57,255,20,0.06); }
+
+.output-toolbar {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+[data-skin="brutal"] .output-toolbar { border-bottom: 2px solid #000; }
+
+.dot-row { display: flex; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.d1 { background: #FF5F57; } .d2 { background: #FEBC2E; } .d3 { background: #28C840; }
+[data-skin="brutal"] .dot { border-radius: 0; border: 1px solid rgba(0,0,0,0.2); }
+
+.output-actions { display: flex; gap: 8px; }
+.btn-small {
+  padding: 5px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: transparent;
+  color: var(--muted); font-family: var(--font-mono);
+  font-size: 11px; cursor: pointer; transition: var(--t);
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-small:hover { border-color: var(--accent); color: var(--accent); }
+.btn-small.copied { border-color: var(--success); color: var(--success); }
+[data-skin="brutal"] .btn-small { border: 2px solid #000; font-weight: 700; }
+[data-skin="brutal"] .btn-small:hover { background: #000; color: #FFD600; border-radius: 0; }
+
+.prompt-output {
+  padding: 24px; font-size: 13.5px; line-height: 1.8;
+  color: var(--text2); white-space: pre-wrap;
+  min-height: 120px; font-family: var(--font-mono);
+  transition: var(--t);
+}
+[data-skin="terminal"] .prompt-output { color: var(--accent); text-shadow: 0 0 8px rgba(57,255,20,0.25); }
+
+.optimization-note {
+  padding: 12px 24px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb,var(--bg) 60%,transparent);
+  font-size: 12px; color: var(--muted);
+  display: flex; align-items: flex-start;
+  gap: 8px; font-family: var(--font-mono);
+}
+[data-skin="brutal"] .optimization-note { border-top: 2px solid #000; }
+.opt-icon { color: var(--warn); flex-shrink: 0; margin-top: 1px; }
+
+/* ══════════════════════════════════════════
+   LOADING & CURSOR
+══════════════════════════════════════════ */
+.loading-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 48px 24px; gap: 16px;
+}
+.spinner {
+  width: 32px; height: 32px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+[data-skin="terminal"] .spinner {
+  border-radius: 0; border: none;
+  background: var(--accent); width: 18px; height: 26px;
+  animation: termBlink 0.5s step-end infinite;
+  box-shadow: 0 0 10px var(--accent);
+}
+.loading-text { font-size: 12px; color: var(--muted); letter-spacing: 0.08em; font-family: var(--font-mono); }
+
+.cursor {
+  display: inline-block; width: 2px; height: 1em;
+  background: var(--accent); margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 0.9s step-end infinite;
+}
+[data-skin="terminal"] .cursor { width: 9px; box-shadow: 0 0 8px var(--accent); }
+
+/* ══════════════════════════════════════════
+   HISTORY
+══════════════════════════════════════════ */
+.history-section { margin-top: 40px; }
+.divider { height: 1px; background: var(--border); margin: 32px 0; }
+[data-skin="brutal"] .divider { height: 3px; background: #000; }
+
+.history-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px; cursor: pointer;
+  transition: var(--t); background: var(--surface);
+}
+.history-item:hover { border-color: var(--accent); transform: translateX(4px); }
+[data-skin="brutal"] .history-item { border: 2px solid #000; border-radius: 0; }
+[data-skin="brutal"] .history-item:hover { background: #FFD600; transform: translate(-2px,-2px); box-shadow: 3px 3px 0 #000; }
+
+.history-tool {
+  font-size: 11px; padding: 2px 8px;
+  background: color-mix(in srgb,var(--accent2) 12%,transparent);
+  color: var(--accent2); border-radius: var(--radius-sm);
+  white-space: nowrap; font-family: var(--font-mono);
+}
+.history-idea { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.history-arrow { color: var(--muted); font-size: 12px; flex-shrink: 0; }
+
+/* ══════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes spin { to{transform:rotate(360deg)} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes termBlink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+.slide-in { animation: slideIn 0.4s ease both; }
+
+@media(max-width:600px) {
+  .tools-grid { gap: 6px; }
+  .tool-chip { font-size: 11px; padding: 5px 10px; }
+  .skin-bar { top: 10px; right: 10px; padding: 4px; }
+  .skin-btn { width: 24px; height: 24px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<!-- SKIN BAR -->
+<div class="skin-bar">
+  <button class="skin-btn" data-s="cyber" onclick="setSkin('cyber')">🌑<span class="skin-tip">Cyber Dark</span></button>
+  <button class="skin-btn" data-s="light" onclick="setSkin('light')">☀️<span class="skin-tip">Light</span></button>
+  <button class="skin-btn" data-s="pastel" onclick="setSkin('pastel')">🌸<span class="skin-tip">Soft Pastel</span></button>
+  <button class="skin-btn" data-s="brutal" onclick="setSkin('brutal')">⚠️<span class="skin-tip">Brutal</span></button>
+  <button class="skin-btn" data-s="terminal" onclick="setSkin('terminal')">▶️<span class="skin-tip">Retro Terminal</span></button>
+</div>
+
+<div class="container">
+
+  <header>
+    <div class="logo-row">
+      <div class="logo-icon">⚡</div>
+      <h1>Prompt Master</h1>
+    </div>
+    <p class="subtitle" id="skinSubtitle">Powered by Claude · Prompts listos para pegar</p>
+  </header>
+
+  <div class="input-section">
+    <p class="section-label">01 / Target Tool</p>
+    <div class="tools-grid">
+      <div class="tool-chip active" data-tool="Claude (claude.ai / API)">Claude</div>
+      <div class="tool-chip" data-tool="ChatGPT / GPT-4o">ChatGPT</div>
+      <div class="tool-chip" data-tool="o3 / o4-mini (OpenAI reasoning)">o3 / o4-mini</div>
+      <div class="tool-chip" data-tool="Gemini 2.x">Gemini</div>
+      <div class="tool-chip" data-tool="Midjourney v7">Midjourney</div>
+      <div class="tool-chip" data-tool="DALL·E 3">DALL·E 3</div>
+      <div class="tool-chip" data-tool="Stable Diffusion / ComfyUI">Stable Diffusion</div>
+      <div class="tool-chip" data-tool="Sora (video AI)">Sora</div>
+      <div class="tool-chip" data-tool="Runway Gen-3">Runway</div>
+      <div class="tool-chip" data-tool="Claude Code (agentic)">Claude Code</div>
+      <div class="tool-chip" data-tool="Cursor (IDE AI)">Cursor</div>
+      <div class="tool-chip" data-tool="ElevenLabs">ElevenLabs</div>
+    </div>
+
+    <p class="section-label">02 / Tu idea</p>
+    <div class="input-wrap">
+      <textarea id="ideaInput" placeholder="Escribe tu idea en bruto... Ej: quiero que analice contratos legales y marque cláusulas peligrosas" maxlength="1000"></textarea>
+      <div class="input-footer">
+        <span class="char-count" id="charCount">0 / 1000</span>
+        <span style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">Ctrl+Enter ↵</span>
+      </div>
+    </div>
+
+    <div class="examples-row">
+      <span style="font-size:11px;color:var(--muted);padding:5px 0;font-family:var(--font-mono)">Ejemplos →</span>
+      <div class="example-pill" data-ex="Resumir documentos PDF largos en bullets ejecutivos">Resumir PDFs</div>
+      <div class="example-pill" data-ex="Revisar código Python y encontrar bugs de rendimiento">Debug código</div>
+      <div class="example-pill" data-ex="Crear imagen de un robot futurista en estilo anime neon">Imagen anime</div>
+      <div class="example-pill" data-ex="Redactar emails de ventas para una startup SaaS B2B">Email ventas</div>
+      <div class="example-pill" data-ex="Narrar un anuncio de 30 segundos con tono inspiracional">Voz anuncio</div>
+    </div>
+  </div>
+
+  <button class="btn-generate" id="generateBtn" onclick="generatePrompt()">
+    <span>⚡</span> Generar Prompt Optimizado
+  </button>
+
+  <div class="output-section" id="outputSection" style="display:none">
+    <div class="output-header">
+      <p class="section-label" style="margin:0">03 / Prompt Generado</p>
+      <div class="target-badge">
+        <span class="badge badge-tool" id="toolBadge">Claude</span>
+        <span class="badge badge-ready" id="statusBadge">● LISTO</span>
+      </div>
+    </div>
+    <div class="output-box">
+      <div class="output-toolbar">
+        <div class="dot-row">
+          <div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div>
+        </div>
+        <div class="output-actions">
+          <button class="btn-small" id="copyBtn" onclick="copyPrompt()"><span>⎘</span> Copiar</button>
+          <button class="btn-small" onclick="clearOutput()"><span>✕</span> Limpiar</button>
+        </div>
+      </div>
+      <div id="promptOutput" class="prompt-output"></div>
+      <div class="optimization-note" id="optNote" style="display:none">
+        <span class="opt-icon">💡</span>
+        <span id="optText"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="historySection" style="display:none">
+    <div class="divider"></div>
+    <p class="section-label">Recientes</p>
+    <div id="historyList"></div>
+  </div>
+
+</div>
+
+<script>
+/* ── SKIN SYSTEM ─────────────────────────── */
+const SKIN_SUBTITLES = {
+  cyber:    'Powered by Claude · Cyber Dark',
+  light:    'Powered by Claude · Light & Clean',
+  pastel:   'Powered by Claude · Soft Pastel ✨',
+  brutal:   'POWERED BY CLAUDE · BRUTAL MODE',
+  terminal: '> PROMPT_MASTER v2.0 — TERMINAL',
+};
+
+function setSkin(skin) {
+  document.documentElement.dataset.skin = skin === 'cyber' ? '' : skin;
+  document.getElementById('skinSubtitle').textContent = SKIN_SUBTITLES[skin];
+  document.querySelectorAll('.skin-btn').forEach(b => b.classList.toggle('active', b.dataset.s === skin));
+  try { localStorage.setItem('pm_skin', skin); } catch(e) {}
+}
+
+// Restore
+try {
+  const s = localStorage.getItem('pm_skin') || 'cyber';
+  setSkin(s);
+} catch(e) { setSkin('cyber'); }
+
+/* ── TOOL CHIPS ──────────────────────────── */
+let selectedTool = 'Claude (claude.ai / API)';
+document.querySelectorAll('.tool-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.tool-chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    selectedTool = c.dataset.tool;
+  });
+});
+
+/* ── CHAR COUNTER ────────────────────────── */
+const ta = document.getElementById('ideaInput');
+const cc = document.getElementById('charCount');
+ta.addEventListener('input', () => cc.textContent = `${ta.value.length} / 1000`);
+
+/* ── EXAMPLE PILLS ───────────────────────── */
+document.querySelectorAll('.example-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    ta.value = p.dataset.ex;
+    cc.textContent = `${ta.value.length} / 1000`;
+    ta.focus();
+  });
+});
+
+/* ── GENERATE ────────────────────────────── */
+const SYSTEM_PROMPT = `You are Prompt Master — an elite prompt engineer.
+
+Your ONLY job: take the user's rough idea + target tool, and output a single production-ready, copy-pasteable prompt optimized for that specific tool.
+
+TOOL-SPECIFIC RULES (apply strictly):
+- Claude (claude.ai / API): Use XML tags for structure (<context>, <task>, <constraints>, <output_format>). Be explicit. Specify output format and length.
+- ChatGPT / GPT-4o: Start minimal. Explicit output contract. Constrain verbosity if needed.
+- o3 / o4-mini (OpenAI reasoning): SHORT clean instructions ONLY. NEVER add "think step by step" or CoT. State goal + desired output. Under 200 words.
+- Gemini 2.x: Add "Cite only sources you are certain of." Use explicit format locks with labeled examples.
+- Midjourney v7: Format: [subject], [style], [lighting], [mood], [technical params] --ar X:X --v 7 --style raw --q 2. Negative prompts after --.
+- DALL·E 3: Natural language. Specify exact style, medium, lighting, color palette, composition. No negative prompts. 2-3 sentences max.
+- Stable Diffusion / ComfyUI: Positive prompt (comma-separated weighted tokens). Separate negative prompt block. Specify model family.
+- Sora (video AI): Describe as film director. Camera movement REQUIRED. Subject + action + environment + camera + mood + duration.
+- Runway Gen-3: Cinematic language. Reference film aesthetic styles. Shot type + movement + lighting.
+- Claude Code (agentic): Include: starting state + target state + allowed actions + forbidden actions + stop conditions. Add "Stop and ask before deleting files or adding dependencies."
+- Cursor (IDE AI): File scope + function scope + exact change + what NOT to change + output format.
+- ElevenLabs: Specify emotion, pacing, speech rate, emphasis markers. Use SSML-style hints for pauses and stress.
+
+OUTPUT FORMAT — ALWAYS follow exactly:
+1. A single copyable prompt block (the actual prompt, ready to paste)
+2. A line starting with "🎯 Target: [tool name] · 💡 [one sentence on what was optimized]"
+3. Only if genuinely needed: a 1-2 line setup note
+
+HARD RULES:
+- Output the prompt FIRST, then the 🎯 line
+- NEVER explain prompting theory
+- NEVER add CoT to reasoning models (o3, o4-mini)
+- NEVER output anything other than the prompt + the two required lines
+- The prompt must work on the FIRST try with zero re-prompts`;
+
+let history = [], isStreaming = false;
+
+async function generatePrompt() {
+  const idea = ta.value.trim();
+  if (!idea) {
+    const w = ta.closest('.input-wrap');
+    w.style.borderColor = 'var(--accent2)';
+    setTimeout(() => w.style.borderColor = '', 1500);
+    return;
+  }
+  if (isStreaming) return;
+  isStreaming = true;
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px"></div> Generando...';
+
+  const os = document.getElementById('outputSection');
+  const po = document.getElementById('promptOutput');
+  const on = document.getElementById('optNote');
+  const tb = document.getElementById('toolBadge');
+  const sb = document.getElementById('statusBadge');
+
+  os.style.display = 'block';
+  os.classList.add('slide-in');
+  on.style.display = 'none';
+  tb.textContent = selectedTool.split(' ')[0];
+  sb.textContent = '⏳ GENERANDO';
+  sb.style.cssText = '';
+  po.innerHTML = `<div class="loading-state"><div class="spinner"></div><span class="loading-text">Optimizando para ${selectedTool.split(' ')[0]}...</span></div>`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: `Tool: ${selectedTool}\nIdea: ${idea}` }]
+      })
+    });
+
+    const data = await res.json();
+    const full = data.content.map(b => b.type === 'text' ? b.text : '').join('');
+    const idx = full.indexOf('🎯');
+    const promptPart = idx !== -1 ? full.slice(0, idx).trim() : full.trim();
+    const metaPart   = idx !== -1 ? full.slice(idx).trim() : '';
+
+    po.innerHTML = '';
+    let i = 0;
+    const cur = document.createElement('span');
+    cur.className = 'cursor';
+    po.appendChild(cur);
+
+    function type() {
+      if (i < promptPart.length) {
+        cur.insertAdjacentText('beforebegin', promptPart[i++]);
+        po.scrollTop = po.scrollHeight;
+        setTimeout(type, i < 50 ? 8 : 4);
+      } else {
+        cur.remove();
+        sb.textContent = '● LISTO';
+        if (metaPart) {
+          document.getElementById('optText').textContent = metaPart;
+          on.style.display = 'flex';
+        }
+        history.unshift({ tool: selectedTool.split(' ')[0], idea: idea.slice(0,60), prompt: promptPart });
+        if (history.length > 5) history.pop();
+        renderHistory();
+      }
+    }
+    type();
+
+  } catch(e) {
+    po.innerHTML = `<span style="color:var(--accent2)">Error al conectar con la API.</span>`;
+    sb.textContent = '✕ ERROR';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<span>⚡</span> Generar Prompt Optimizado';
+  isStreaming = false;
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('promptOutput').textContent).then(() => {
+    const b = document.getElementById('copyBtn');
+    b.innerHTML = '<span>✓</span> Copiado';
+    b.classList.add('copied');
+    setTimeout(() => { b.innerHTML = '<span>⎘</span> Copiar'; b.classList.remove('copied'); }, 2000);
+  });
+}
+
+function clearOutput() { document.getElementById('outputSection').style.display = 'none'; }
+
+function renderHistory() {
+  if (!history.length) return;
+  document.getElementById('historySection').style.display = 'block';
+  document.getElementById('historyList').innerHTML = history.map((h,i) => `
+    <div class="history-item" onclick="loadHistory(${i})">
+      <span class="history-tool">${h.tool}</span>
+      <span class="history-idea">${h.idea}${h.idea.length>=60?'...':''}</span>
+      <span class="history-arrow">→</span>
+    </div>`).join('');
+}
+
+function loadHistory(i) {
+  const h = history[i];
+  document.getElementById('outputSection').style.display = 'block';
+  document.getElementById('promptOutput').textContent = h.prompt;
+  document.getElementById('toolBadge').textContent = h.tool;
+  document.getElementById('statusBadge').textContent = '● LISTO';
+}
+
+ta.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) generatePrompt(); });
+</script>
+</body>
+</html>
